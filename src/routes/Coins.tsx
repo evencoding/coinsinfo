@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getCoins } from "../api";
+import { isDarkAtom } from "../atoms";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -19,6 +22,18 @@ const Header = styled.div`
 const Title = styled.div`
   font-size: 32px;
   color: ${(props) => props.theme.accentColor};
+  position: relative;
+  span {
+    position: absolute;
+    color: ${(props) => props.theme.textColor};
+    font-size: 15px;
+    right: -100px;
+    top: 12px;
+    &:hover {
+      font-size: 50%;
+      cursor: pointer;
+    }
+  }
 `;
 
 const CoinsList = styled.ul``;
@@ -26,9 +41,8 @@ const CoinsList = styled.ul``;
 const Coin = styled.li`
   display: flex;
   align-items: center;
-  background-color: #2f3640;
+  background-color: ${(props) => props.theme.bgColor};
   border: 2px solid #899db9;
-  color: whitesmoke;
   border-radius: 20px;
   margin-bottom: 20px;
   a {
@@ -66,11 +80,22 @@ interface ICoins {
 }
 
 function Coins() {
+  const [isDark, setIsDark] = useState(false);
+  const setDarkAtem = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => {
+    setDarkAtem((current) => !current);
+    setIsDark(!isDark);
+  };
   const { isLoading, data } = useQuery<ICoins[]>("coins", getCoins);
   return (
     <Container>
       <Header>
-        <Title>Coins</Title>
+        <Title>
+          Coins
+          <span onClick={toggleDarkAtom}>
+            {isDark ? "Light Mode" : "Dark Mode"}
+          </span>
+        </Title>
       </Header>
       {isLoading ? (
         <Loading>Loading...</Loading>

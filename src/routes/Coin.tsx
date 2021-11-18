@@ -1,8 +1,16 @@
 import { useQuery } from "react-query";
-import { useLocation, useParams, useRouteMatch } from "react-router";
+import {
+  Route,
+  Switch,
+  useLocation,
+  useParams,
+  useRouteMatch,
+} from "react-router";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinITicker } from "../api";
+import Chart from "./Chart";
+import Price from "./Price";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -145,14 +153,16 @@ function Coin() {
   const { state } = useLocation<ILocation>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
-  console.log(priceMatch);
   const { isLoading: infoLoading, data: infoData } = useQuery<IInfo>(
     ["info", coinId],
     () => fetchCoinInfo(coinId)
   );
   const { isLoading: tickerLoading, data: tickerData } = useQuery<ITicker>(
     ["ticker", coinId],
-    () => fetchCoinITicker(coinId)
+    () => fetchCoinITicker(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
   const loading = infoLoading || tickerLoading;
   return (
@@ -194,16 +204,26 @@ function Coin() {
               <span>{tickerData?.max_supply}</span>
             </OverviewItem>
           </Overview>
+
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/${coinId}/price`}>Price</Link>
+            </Tab>
+          </Tabs>
+
+          <Switch>
+            <Route path={`/:coinId/Chart`}>
+              <Chart coinId={coinId} />
+            </Route>
+            <Route path={`/:coinId/Price`}>
+              <Price coinId={coinId} />
+            </Route>
+          </Switch>
         </>
       )}
-      <Tabs>
-        <Tab isActive={chartMatch !== null}>
-          <Link to={`/${coinId}/chart`}>Chart</Link>
-        </Tab>
-        <Tab isActive={priceMatch !== null}>
-          <Link to={`/${coinId}/price`}>Price</Link>
-        </Tab>
-      </Tabs>
     </Container>
   );
 }
