@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import {
   Route,
@@ -167,6 +168,9 @@ function Coin() {
   const loading = infoLoading || tickerLoading;
   return (
     <Container>
+      <Helmet>
+        <title>{state?.name}</title>
+      </Helmet>
       <HomeLink to="/">
         <span>Home</span>
       </HomeLink>
@@ -207,18 +211,18 @@ function Coin() {
 
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>Chart</Link>
+              <Link to={`/coin/${coinId}/chart`}>Chart</Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`}>Price</Link>
+              <Link to={`/coin/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
 
           <Switch>
-            <Route path={`/:coinId/Chart`}>
+            <Route path={`/coin/:coinId/Chart`}>
               <Chart coinId={coinId} />
             </Route>
-            <Route path={`/:coinId/Price`}>
+            <Route path={`/coin/:coinId/Price`}>
               <Price coinId={coinId} />
             </Route>
           </Switch>

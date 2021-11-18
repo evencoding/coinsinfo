@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { Helmet } from "react-helmet";
 import { getCoins } from "../api";
 import { isDarkAtom } from "../atoms";
 
@@ -89,6 +90,9 @@ function Coins() {
   const { isLoading, data } = useQuery<ICoins[]>("coins", getCoins);
   return (
     <Container>
+      <Helmet>
+        <title>Coins</title>
+      </Helmet>
       <Header>
         <Title>
           Coins
@@ -105,7 +109,7 @@ function Coins() {
             <Coin key={coin.id}>
               <Link
                 to={{
-                  pathname: `/${coin.id}`,
+                  pathname: `/coin/${coin.id}`,
                   state: { name: coin.name },
                 }}
               >
