@@ -81,7 +81,7 @@ interface ICoins {
 }
 
 function Coins() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const setDarkAtem = useSetRecoilState(isDarkAtom);
   const toggleDarkAtom = () => {
     setDarkAtem((current) => !current);
