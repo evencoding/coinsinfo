@@ -211,18 +211,18 @@ function Coin() {
 
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/coin/${coinId}/chart`}>Chart</Link>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/coin/${coinId}/price`}>Price</Link>
+              <Link to={`/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
 
           <Switch>
-            <Route path={`/coin/:coinId/Chart`}>
+            <Route path={`/:coinId/Chart`}>
               <Chart coinId={coinId} />
             </Route>
-            <Route path={`/coin/:coinId/Price`}>
+            <Route path={`/:coinId/Price`}>
               <Price coinId={coinId} />
             </Route>
           </Switch>

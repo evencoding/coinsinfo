@@ -1,5 +1,4 @@
 import React from "react";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { useRecoilValue } from "recoil";
 import { ThemeProvider } from "styled-components";
 import GlobalStyles from "./GlobalStyles";
@@ -14,7 +13,6 @@ function App() {
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyles />
         <Router />
-        <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>
     </>
   );

@@ -57,5 +57,5 @@
     "@types/styled-components": "^5.1.15"
   },
   "type": "module",
-  "homepage": "https://evencoding.github.io/coin-info/"
+  "homepage": "https://evencoding.github.io/coinsinfo/"
 }
