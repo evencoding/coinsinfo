@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { fetchCoinHistody } from "../api";
 
 const PriceContainer = styled.div`
-  padding: 0px 90px;
+  padding: 0px 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -48,13 +49,14 @@ function Price({ coinId }: ChartProps) {
     () => fetchCoinHistody(coinId),
     { refetchInterval: 10000 }
   );
+  const reverseData = data ? [...data].reverse() : null;
   return (
     <div>
       {isLoading ? (
         "Loading..."
       ) : (
         <>
-          {data?.map((v) => (
+          {reverseData?.map((v) => (
             <PriceContainer key={v.time_open}>
               <PriceDate>{v.time_open.slice(0, 10)}</PriceDate>
               <PriceContent>
