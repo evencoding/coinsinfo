@@ -1,87 +1,176 @@
-import { useState } from "react";
+import { useParams } from "react-router";
 import { useQuery } from "react-query";
+import { fetchCoinITicker } from "../api";
 import styled from "styled-components";
-import { fetchCoinHistody } from "../api";
 
+//css
+const Container = styled.div`
+  padding: 0 20px;
+  max-width: 500px;
+  margin: 0 auto;
+`;
+const Title = styled.h1`
+  color: ${(props) => props.theme.textColor};
+  font-size: 30px;
+  text-align: center;
+`;
+const Loader = styled.div`
+  text-align: center;
+  display: block;
+`;
 const PriceContainer = styled.div`
-  padding: 0px 50px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+  margin-top: 20px;
 `;
-
-const PriceDate = styled.div``;
-
-const PriceContent = styled.div``;
-
-const PriceTime = styled.div`
-  span {
-    &:first-child {
-      margin-right: 8px;
-    }
-    &:not(:last-child) {
-      margin-bottom: 3px;
-    }
-  }
+const PriceList = styled.div`
+  padding: 20px;
+  border: 1px solid ${(props) => props.theme.textColor};
+  border-radius: 15px;
+  margin-bottom: 10px;
+  font-weight: bold;
   display: flex;
   justify-content: space-between;
 `;
+const Label = styled.div``;
+const Value = styled.div``;
+const Text = styled.span<{ isPositive: boolean }>`
+  color: ${(props) => (props.isPositive ? `#00b894` : `#ff7675`)};
+`;
 
-interface IHistorical {
-  time_open: string;
-  time_close: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  market_cap: number;
-}
-
-interface ChartProps {
+interface RouteParams {
   coinId: string;
 }
 
-function Price({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(
-    ["ohlcv", coinId],
-    () => fetchCoinHistody(coinId),
-    { refetchInterval: 10000 }
+interface PriceData {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  beta_value: number;
+  first_data_at: string;
+  last_updated: string;
+  //quotes: object;
+  quotes: {
+    USD: {
+      ath_date: string;
+      ath_price: number;
+      market_cap: number;
+      market_cap_change_24h: number;
+      percent_change_1h: number;
+      percent_change_1y: number;
+      percent_change_6h: number;
+      percent_change_7d: number;
+      percent_change_12h: number;
+      percent_change_15m: number;
+      percent_change_24h: number;
+      percent_change_30d: number;
+      percent_change_30m: number;
+      percent_from_price_ath: number;
+      price: number;
+      volume_24h: number;
+      volume_24h_change_24h: number;
+    };
+  };
+}
+function PlusMinus(value: number | undefined) {
+  if (value) {
+    return value > 0;
+  }
+}
+
+function Price() {
+  const { coinId } = useParams<RouteParams>();
+  const { isLoading, data } = useQuery<PriceData>(
+    ["tickers", coinId],
+    () => fetchCoinITicker(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
-  const reverseData = data ? [...data].reverse() : null;
   return (
-    <div>
+    <Container>
+      <Title>{coinId} Price</Title>
       {isLoading ? (
-        "Loading..."
+        <Loader>Price loading...</Loader>
       ) : (
-        <>
-          {reverseData?.map((v) => (
-            <PriceContainer key={v.time_open}>
-              <PriceDate>{v.time_open.slice(0, 10)}</PriceDate>
-              <PriceContent>
-                <PriceTime>
-                  <span>Open</span>
-                  <span>{v.open.toFixed(3)}</span>
-                </PriceTime>
-                <PriceTime>
-                  <span>High</span>
-                  <span>{v.high.toFixed(3)}</span>
-                </PriceTime>
-                <PriceTime>
-                  <span>Low</span>
-                  <span>{v.low.toFixed(3)}</span>
-                </PriceTime>
-                <PriceTime>
-                  <span>Close</span>
-                  <span>{v.close.toFixed(3)}</span>
-                </PriceTime>
-              </PriceContent>
-            </PriceContainer>
-          ))}
-        </>
+        <PriceContainer>
+          <PriceList>
+            <Label>Percent change (15minutes)</Label>
+            <Value>
+              <Text
+                isPositive={
+                  PlusMinus(data?.quotes.USD.percent_change_15m) === true
+                }
+              >
+                {data?.quotes.USD.percent_change_15m}%
+              </Text>
+            </Value>
+          </PriceList>
+          <PriceList>
+            <Label>Percent change (1hour)</Label>
+            <Value>
+              <Text
+                isPositive={
+                  PlusMinus(data?.quotes.USD.percent_change_1h) === true
+                }
+              >
+                {data?.quotes.USD.percent_change_1h}%
+              </Text>
+            </Value>
+          </PriceList>
+          <PriceList>
+            <Label>Percent change (1day)</Label>
+            <Value>
+              <Text
+                isPositive={
+                  PlusMinus(data?.quotes.USD.percent_change_24h) === true
+                }
+              >
+                {data?.quotes.USD.percent_change_24h}%
+              </Text>
+            </Value>
+          </PriceList>
+          <PriceList>
+            <Label>Percent change (1Week)</Label>
+            <Value>
+              <Text
+                isPositive={
+                  PlusMinus(data?.quotes.USD.percent_change_7d) === true
+                }
+              >
+                {data?.quotes.USD.percent_change_7d}%
+              </Text>
+            </Value>
+          </PriceList>
+          <PriceList>
+            <Label>Percent change (1month)</Label>
+            <Value>
+              <Text
+                isPositive={
+                  PlusMinus(data?.quotes.USD.percent_change_30d) === true
+                }
+              >
+                {data?.quotes.USD.percent_change_30d}%
+              </Text>
+            </Value>
+          </PriceList>
+          <PriceList>
+            <Label>Percent change (1year)</Label>
+            <Value>
+              <Text
+                isPositive={
+                  PlusMinus(data?.quotes.USD.percent_change_1y) === true
+                }
+              >
+                {data?.quotes.USD.percent_change_1y}%
+              </Text>
+            </Value>
+          </PriceList>
+        </PriceContainer>
       )}
-    </div>
+    </Container>
   );
 }
 
